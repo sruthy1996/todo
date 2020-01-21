@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, Validators, FormGroup } from '@angular/forms'
+import { UserService } from '../services/user.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -10,7 +12,9 @@ export class RegisterComponent implements OnInit {
 
   registerForm;
   constructor(
-    private formBuilder: FormBuilder) {
+    private router: Router,
+    private formBuilder: FormBuilder,
+    private userService: UserService) {
     this.registerForm = this.formBuilder.group({
       firstName: new FormControl('',[
         Validators.required,
@@ -49,4 +53,15 @@ export class RegisterComponent implements OnInit {
   hasError(name){
     return this.get(name).errors && (this.get(name).dirty || this.get(name).touched)
   }
+
+
+register(){
+  this.userService.register(this.registerForm.value)
+  .subscribe(data=>{
+    this.router.navigate(['/login']);
+    //console.log("success",data);
+  }, err=>{
+    alert(err.error.message);
+  });
+ } 
 }
